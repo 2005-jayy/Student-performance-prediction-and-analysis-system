@@ -1,7 +1,31 @@
-import pandas as pd
-import mathplotlib.pyplot as plt
+import pandas as pd 
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("data/cleaned_student_dataset.csv")
+
+print(df.shape)
+
+#let's start the visulization of cleaned data set 
+
+#here we are plot the histogram for the distributions of marks and using 20 bins cause we have is data for visulization
+
+plt.hist(df["Marks"], bins=20, edgecolor="blue")
+plt.title("Distribution of marks of students")
+plt.xlabel("Marks")
+plt.ylabel("freq")
+plt.show()
 
 
-df = pd.read_csv("D:\Student-performance-prediction-and-analysis-system\data\cleaned_student_dataset.csv")
+#now let's lets plot the graph to identify relation between studyhours and marks of students
+plt.scatter(df["StudyHours"], df["Marks"], color="orange")
+plt.title("Study hrs vs marks")
+plt.xlabel("study hrs")
+plt.ylabel("marks obtained")
+plt.show()
 
-print(df.head())
+#now we will see the comparison of marks on bases of gender
+plt.boxplot(df["Marks"] by=df["gender"])
+plt.title("comparison of marks on bases of gender")
+plt.xlabel("gender")
+plt.ylabel("Marks obtained")
+plt.show()
