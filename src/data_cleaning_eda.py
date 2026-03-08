@@ -1,6 +1,8 @@
 import pandas as pd
 df=pd.read_csv("data/Student_Performance_datasetRaw.csv")
 
+print(df["gender"].value_counts())
+
 print(df.shape)
 
 print(df.info())
