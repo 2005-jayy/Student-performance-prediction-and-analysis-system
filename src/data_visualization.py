@@ -24,7 +24,7 @@ plt.ylabel("marks obtained")
 plt.show()
 
 #now we will see the comparison of marks on bases of gender
-plt.boxplot(df["Marks"]by= df["gender"])
+plt.boxplot(column="Marks" ,  by= "gender")
 plt.title("comparison of marks on bases of gender")
 plt.xlabel("gender")
 plt.ylabel("Marks obtained")
@@ -39,4 +39,20 @@ plt.colorbar()
 plt.xticks(range(len(corr)), corr.columns, rotation=90)
 plt.yticks(range(len(corr)),corr.columns)
 plt.title("heatmap")
+plt.show()
+
+
+#now we will see the comparison of marks on bases of academic level
+plt.boxplot(column="Marks", by ="AcademicLevel")
+plt.title("observation of marks on bases of acadmic level")
+plt.xlabel("Acadmic Level")
+ply.ylabel("marks")
+plt.show()
+
+
+#now e wil see the last graph for identifying the relation between sleep hours ans marks of students
+plt.scatter(df["SleepHours"],df["Marks"],color="blue")
+plt.title("sleep hrs vs marks")
+plt.xlabel("sleep hrs")
+plt.ylabel("marks obtained")
 plt.show()
