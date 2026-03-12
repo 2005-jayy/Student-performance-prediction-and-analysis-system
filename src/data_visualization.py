@@ -46,7 +46,7 @@ plt.show()
 plt.boxplot(column="Marks", by ="AcademicLevel")
 plt.title("observation of marks on bases of acadmic level")
 plt.xlabel("Acadmic Level")
-ply.ylabel("marks")
+pltylabel("marks")
 plt.show()
 
 
