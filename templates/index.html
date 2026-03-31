@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Exam Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-1: #0c1226;
+            --bg-2: #1a2e55;
+            --surface: rgba(255, 255, 255, 0.9);
+            --surface-2: rgba(255, 255, 255, 0.72);
+            --ink: #111827;
+            --muted: #475569;
+            --accent: #0ea5e9;
+            --accent-2: #2563eb;
+            --success-bg: #ecfdf5;
+            --success-border: #10b981;
+            --danger-bg: #fff1f2;
+            --danger-border: #e11d48;
+            --ring: rgba(14, 165, 233, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Plus Jakarta Sans", "Segoe UI", Tahoma, sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(14, 165, 233, 0.34), transparent 35%),
+                radial-gradient(circle at 80% 10%, rgba(37, 99, 235, 0.28), transparent 32%),
+                linear-gradient(160deg, var(--bg-1), var(--bg-2));
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            padding: 28px 16px;
+        }
+
+        .container {
+            max-width: 1080px;
+            background: var(--surface);
+            margin: auto;
+            padding: 28px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 80px rgba(5, 18, 46, 0.42);
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(14, 165, 233, 0.06), rgba(37, 99, 235, 0.04));
+            pointer-events: none;
+        }
+
+        h1, h2, h3 {
+            font-family: "Sora", "Trebuchet MS", sans-serif;
+            text-align: center;
+            margin: 0;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+            margin-top: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #0f172a;
+            letter-spacing: 0.1px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(255, 255, 255, 0.9);
+            color: #0f172a;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--ring);
+            transform: translateY(-1px);
+        }
+
+        .full {
+            grid-column: span 2;
+        }
+
+        .headline {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 12px;
+        }
+
+        .headline h1 {
+            font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+            letter-spacing: -0.03em;
+        }
+
+        .headline p {
+            text-align: center;
+            color: var(--muted);
+            margin: 10px 0 0;
+            font-size: 0.95rem;
+        }
+
+        .field {
+            background: var(--surface-2);
+            border: 1px solid rgba(226, 232, 240, 0.85);
+            border-radius: 14px;
+            padding: 10px 12px;
+            animation: riseIn 0.38s ease both;
+        }
+
+        .field:nth-child(3n) { animation-delay: 0.03s; }
+        .field:nth-child(4n) { animation-delay: 0.06s; }
+
+        button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.28);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px rgba(37, 99, 235, 0.32);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--success-bg);
+            border-left: 5px solid var(--success-border);
+            text-align: center;
+            font-size: 20px;
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
+        }
+
+        .graphs {
+            margin-top: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .graph-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 12px;
+        }
+
+        .graph-card {
+            background: rgba(255, 255, 255, 0.88);
+            border-radius: 14px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            padding: 12px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .error-box {
+            background: var(--danger-bg);
+            border-left-color: var(--danger-border);
+            box-shadow: 0 8px 20px rgba(225, 29, 72, 0.14);
+        }
+
+        .error-box ul {
+            margin: 10px 0 0;
+            padding-left: 18px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .feedback-card {
+            margin-top: 14px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .feedback-card h3 {
+            text-align: left;
+            margin-bottom: 8px;
+            font-size: 1.02rem;
+        }
+
+        .feedback-card p {
+            margin: 0 0 10px;
+        }
+
+        .feedback-card ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .adjustment-box {
+            margin-top: 10px;
+            text-align: left;
+            font-size: 14px;
+            background: rgba(15, 23, 42, 0.04);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .adjustment-box ul {
+            margin: 8px 0 0;
+            padding-left: 18px;
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                padding: 18px;
+                border-radius: 18px;
+            }
+
+            form,
+            .graph-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    {% set fv = form_values or {} %}
+
+    <div class="headline">
+        <h1>Student Exam Score Dashboard</h1>
+        <p>Predict exam performance with study, lifestyle, and wellbeing indicators.</p>
+    </div>
+
+    <form action="/predict_form" method="POST">
+
+        <div class="field">
+            <label>Age</label>
+            <input type="number" name="age" value="{{ fv.get('age', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Gender</label>
+            <select name="gender" required>
+                <option value="Male" {% if fv.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if fv.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Academic Level</label>
+            <select name="academic_level" required>
+                <option value="Undergraduate" {% if fv.get('academic_level') == 'Undergraduate' %}selected{% endif %}>Undergraduate</option>
+                <option value="Postgraduate" {% if fv.get('academic_level') == 'Postgraduate' %}selected{% endif %}>Postgraduate</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Study Hours</label>
+            <input type="number" step="0.1" name="study_hours" value="{{ fv.get('study_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Sleep Hours</label>
+            <input type="number" step="0.1" name="sleep_hours" value="{{ fv.get('sleep_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Self Study Hours</label>
+            <input type="number" step="0.1" name="self_study_hours" value="{{ fv.get('self_study_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Online Classes Hours</label>
+            <input type="number" step="0.1" name="online_classes_hours" value="{{ fv.get('online_classes_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Social Media Hours</label>
+            <input type="number" step="0.1" name="social_media_hours" value="{{ fv.get('social_media_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Gaming Hours</label>
+            <input type="number" step="0.1" name="gaming_hours" value="{{ fv.get('gaming_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Screen Time Hours</label>
+            <input type="number" step="0.1" name="screen_time_hours" value="{{ fv.get('screen_time_hours', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Exercise Minutes</label>
+            <input type="number" name="exercise_minutes" value="{{ fv.get('exercise_minutes', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Caffeine Intake (mg)</label>
+            <input type="number" name="caffeine_intake_mg" value="{{ fv.get('caffeine_intake_mg', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Part Time Job</label>
+            <select name="part_time_job" required>
+                <option value="0" {% if fv.get('part_time_job') == '0' %}selected{% endif %}>No</option>
+                <option value="1" {% if fv.get('part_time_job') == '1' %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Upcoming Deadline</label>
+            <select name="upcoming_deadline" required>
+                <option value="0" {% if fv.get('upcoming_deadline') == '0' %}selected{% endif %}>No</option>
+                <option value="1" {% if fv.get('upcoming_deadline') == '1' %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Internet Quality</label>
+            <select name="internet_quality" required>
+                <option value="Poor" {% if fv.get('internet_quality') == 'Poor' %}selected{% endif %}>Poor</option>
+                <option value="Average" {% if fv.get('internet_quality') == 'Average' %}selected{% endif %}>Average</option>
+                <option value="Good" {% if fv.get('internet_quality') == 'Good' %}selected{% endif %}>Good</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Mental Health Score (0-10)</label>
+            <input type="number" step="0.1" min="0" max="10" name="mental_health_score" value="{{ fv.get('mental_health_score', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Focus Index (0-10)</label>
+            <input type="number" step="0.1" min="0" max="10" name="focus_index" value="{{ fv.get('focus_index', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Burnout Level (0-10)</label>
+            <input type="number" step="0.1" min="0" max="10" name="burnout_level" value="{{ fv.get('burnout_level', '') }}" required>
+        </div>
+
+        <div class="field">
+            <label>Productivity Score (1-100)</label>
+            <input type="number" step="0.1" min="1" max="100" placeholder="e.g. 40" name="productivity_score" value="{{ fv.get('productivity_score', '') }}" required>
+        </div>
+
+        <div class="full">
+            <button type="submit">Predict Exam Score</button>
+        </div>
+    </form>
+
+    {% if prediction %}
+    <div class="result">
+        🎯 Predicted Exam Score: <strong>{{ prediction }}/100</strong><br>
+        🏅 Estimated Grade: <strong>{{ grade }}</strong><br>
+        📘 Estimated GPA (10-point): <strong>{{ gpa }}</strong>
+
+        {% if penalty_points and penalty_points > 0 %}
+        <div class="adjustment-box">
+            <strong>Reality Adjustment Applied</strong><br>
+            Model Score: <strong>{{ raw_prediction }}</strong> | Penalty: <strong>-{{ penalty_points }}</strong>
+            {% if adjustment_notes %}
+            <ul>
+                {% for note in adjustment_notes %}
+                <li>{{ note }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if feedback_message %}
+        <div class="feedback-card">
+            <h3>💬 Feedback: {{ performance_level }}</h3>
+            <p>{{ feedback_message }}</p>
+            {% if improvement_tips %}
+            <ul>
+                {% for tip in improvement_tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="result error-box">
+        ❌ {{ error }}
+        {% if error_lines %}
+        <ul>
+            {% for line in error_lines %}
+            <li>{{ line }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 📊 GRAPH SECTION -->
+    <div class="graphs">
+        <h2>📊 Data Insights</h2>
+
+        <div class="graph-grid">
+            <div class="graph-card">
+                <h3>Marks Distribution</h3>
+                <img src="{{ url_for('static', filename='histogram.png') }}">
+            </div>
+
+            <div class="graph-card">
+                <h3>Study Hours vs Marks</h3>
+                <img src="{{ url_for('static', filename='study_vs_score.png') }}">
+            </div>
+
+            <div class="graph-card">
+                <h3>Sleep vs Marks</h3>
+                <img src="{{ url_for('static', filename='sleep_vs_score.png') }}">
+            </div>
+
+            <div class="graph-card">
+                <h3>Gender Comparison</h3>
+                <img src="{{ url_for('static', filename='gender_boxplot.png') }}">
+            </div>
+
+            <div class="graph-card full">
+                <h3>Correlation Heatmap</h3>
+                <img src="{{ url_for('static', filename='heatmap.png') }}">
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

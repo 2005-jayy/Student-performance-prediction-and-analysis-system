@@ -1,6 +1,6 @@
 import pandas as pd
-df=pd.read_csv("data/cleaned_student_dataset.csv")
-
+df=pd.read_csv("Student-performance-prediction-and-analysis-system/data/cleaned_student_dataset.csv")
+print(df.columns)
 print("Exam Score Statistics:")
 print(df["exam_score"].describe())
 
