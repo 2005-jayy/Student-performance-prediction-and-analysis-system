@@ -3,6 +3,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_FILE = os.path.join(BASE_DIR, "data", "cleaned_student_dataset.csv")
 MODEL_FILE = os.path.join(BASE_DIR, "student_exam_model.pkl")
+HISTORY_FILE = os.path.join(BASE_DIR, "data", "prediction_history.json")
 
 TARGET_COLUMN = "exam_score"
 TARGET_SCALE_MAX = 100.0

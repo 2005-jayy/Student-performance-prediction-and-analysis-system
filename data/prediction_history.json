@@ -1,0 +1,14 @@
+[
+  {
+    "created_at": "2026-04-02 11:40",
+    "source": "form",
+    "predicted_score": 75.28,
+    "grade": "A",
+    "risk_level": "Moderate Risk",
+    "study_hours": 6.0,
+    "self_study_hours": 2.0,
+    "sleep_hours": 8.0,
+    "focus_index": 9.0,
+    "burnout_level": 5.0
+  }
+]

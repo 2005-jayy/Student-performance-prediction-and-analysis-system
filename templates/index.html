@@ -227,6 +227,164 @@
             padding-left: 18px;
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+            text-align: left;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .stat-card h3 {
+            text-align: left;
+            font-size: 0.98rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-card p,
+        .stat-card ul {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .stat-card ul {
+            padding-left: 18px;
+        }
+
+        .factor-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .factor-list li {
+            padding: 10px 0;
+            border-top: 1px solid rgba(226, 232, 240, 0.85);
+        }
+
+        .factor-list li:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .factor-badge {
+            display: inline-block;
+            min-width: 72px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .factor-badge.positive {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .factor-badge.negative {
+            background: #ffe4e6;
+            color: #be123c;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            text-align: left;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .scenario-score {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 6px 0;
+        }
+
+        .scenario-delta {
+            color: #047857;
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+
+        .history-panel {
+            margin-top: 22px;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .history-panel h3 {
+            text-align: left;
+            margin-bottom: 8px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 10px 8px;
+            border-top: 1px solid rgba(226, 232, 240, 0.9);
+            text-align: left;
+        }
+
+        .history-table th {
+            color: var(--muted);
+            font-size: 12px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .history-chip {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.12);
+            color: #075985;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.66);
+            border: 1px dashed rgba(148, 163, 184, 0.7);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
         .adjustment-box {
             margin-top: 10px;
             text-align: left;
@@ -259,12 +417,37 @@
             }
 
             form,
-            .graph-grid {
+            .graph-grid,
+            .stats-grid,
+            .scenario-grid {
                 grid-template-columns: 1fr;
             }
 
             .full {
                 grid-column: auto;
+            }
+
+            .history-table,
+            .history-table tbody,
+            .history-table tr,
+            .history-table td,
+            .history-table th {
+                display: block;
+                width: 100%;
+            }
+
+            .history-table thead {
+                display: none;
+            }
+
+            .history-table td {
+                padding: 6px 0;
+                border-top: 0;
+            }
+
+            .history-table tr {
+                padding: 10px 0;
+                border-top: 1px solid rgba(226, 232, 240, 0.9);
             }
         }
     </style>
@@ -397,16 +580,20 @@
         </div>
     </form>
 
-    {% if prediction %}
+    {% if prediction is not none %}
     <div class="result">
         🎯 Predicted Exam Score: <strong>{{ prediction }}/100</strong><br>
         🏅 Estimated Grade: <strong>{{ grade }}</strong><br>
         📘 Estimated GPA (10-point): <strong>{{ gpa }}</strong>
 
-        {% if penalty_points and penalty_points > 0 %}
+        {% if adjustment_points and adjustment_points != 0 %}
         <div class="adjustment-box">
             <strong>Reality Adjustment Applied</strong><br>
-            Model Score: <strong>{{ raw_prediction }}</strong> | Penalty: <strong>-{{ penalty_points }}</strong>
+            Model Score: <strong>{{ raw_prediction }}</strong> |
+            Net Adjustment:
+            <strong>
+                {% if adjustment_points > 0 %}+{% endif %}{{ adjustment_points }}
+            </strong>
             {% if adjustment_notes %}
             <ul>
                 {% for note in adjustment_notes %}
@@ -430,6 +617,71 @@
             {% endif %}
         </div>
         {% endif %}
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>⚠️ Risk Profile</h3>
+                <p><strong>{{ risk_level }}</strong></p>
+                <p>{{ risk_message }}</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>🗓 Action Plan</h3>
+                <ul>
+                    {% for step in action_plan %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% if score_factors %}
+        <div class="feedback-card">
+            <h3>🔍 Score Explanation</h3>
+            <p>These are the strongest habits currently shaping the prediction.</p>
+            <ul class="factor-list">
+                {% for factor in score_factors %}
+                <li>
+                    <span class="factor-badge {{ factor.direction }}">{{ factor.direction|title }}</span>
+                    <strong>{{ factor.label }}</strong><br>
+                    {{ factor.detail }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if scenarios %}
+        <div class="feedback-card">
+            <h3>📈 What-If Analysis</h3>
+            <p>These sample scenarios show how the score may change if the routine improves in specific ways.</p>
+            <div class="scenario-grid">
+                {% for scenario in scenarios %}
+                <div class="scenario-card">
+                    <h3>{{ scenario.name }}</h3>
+                    <div class="scenario-score">{{ scenario.predicted_score }}/100</div>
+                    <div class="scenario-delta">
+                        {% if scenario.delta >= 0 %}+{% endif %}{{ scenario.delta }} vs current
+                    </div>
+                    {% if scenario.changes %}
+                    <ul>
+                        {% for change in scenario.changes %}
+                        <li>{{ change }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% if prediction is none and not error %}
+    <div class="empty-state">
+        <h3>Run a Prediction</h3>
+        <p>Submit the form to see the predicted score, risk profile, action plan, and what-if scenarios.</p>
     </div>
     {% endif %}
 
@@ -443,6 +695,40 @@
             {% endfor %}
         </ul>
         {% endif %}
+    </div>
+    {% endif %}
+
+    {% if prediction_history %}
+    <div class="history-panel">
+        <h3>🕘 Recent Predictions</h3>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Risk</th>
+                    <th>Routine Snapshot</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in prediction_history %}
+                <tr>
+                    <td>{{ item.created_at }}</td>
+                    <td><strong>{{ item.predicted_score }}</strong></td>
+                    <td>{{ item.grade }}</td>
+                    <td><span class="history-chip">{{ item.risk_level }}</span></td>
+                    <td>
+                        Study {{ item.study_hours }}h,
+                        Self {{ item.self_study_hours }}h,
+                        Sleep {{ item.sleep_hours }}h,
+                        Focus {{ item.focus_index }},
+                        Burnout {{ item.burnout_level }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     {% endif %}
 
